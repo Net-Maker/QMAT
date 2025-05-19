@@ -2,7 +2,7 @@
 // Created by 27665 on 2024/7/24.
 //
 
-#include "nonmanifoldmesh.h"
+#include "NonManifoldMesh.h"
 #include <ctime>
 #include <cstdio>
 #include <boost/lexical_cast.hpp>

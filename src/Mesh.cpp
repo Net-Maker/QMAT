@@ -3,7 +3,8 @@
 #include <CGAL/centroid.h>
 
 #include <Eigen/Dense>
-#include <corecrt_math_defines.h>
+#define _USE_MATH_DEFINES // 添加这一行
+#include <cmath>          // 添加这一行
 
 double Triangulation::TetCircumRadius(const Tetrahedron & tet)
 {

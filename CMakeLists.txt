@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(QMAT)
-
+find_package(CGAL REQUIRED)
 set(CMAKE_CXX_STANDARD 14)
 
 if(APPLE)
@@ -50,3 +50,4 @@ add_executable(QMAT main.cpp
         src/NonManifoldMesh.cpp
         src/NonManifoldMesh.h
 )
+target_link_libraries(QMAT PRIVATE CGAL::CGAL gmp gmpxx)
