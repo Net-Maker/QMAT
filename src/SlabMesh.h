@@ -27,6 +27,7 @@ public:
     bool is_non_manifold;
     bool is_disk;
     bool is_boundary;
+    bool is_selected;
 };
 
 class SlabEdge : public PrimEdge, public SlabPrim
@@ -105,6 +106,8 @@ public:
     bool Contractible(unsigned vid_src, unsigned vid_tgt);
     bool Contractible(unsigned vid_src1, unsigned vid_src2, Vector3d &v_tgt);
     bool MergeVertices(unsigned vid_src1, unsigned vid_src2, unsigned &vid_tgt);
+    vector<string> my_split(const string &str, const string &pattern); // Zhiyang added.
+	double p_distance(double x1, double y1, double z1, double x2, double y2, double z2); // Zhiyang added.
 
     unsigned VertexIncidentEdgeCount(unsigned vid);
     unsigned VertexIncidentFaceCount(unsigned vid);
@@ -131,6 +134,7 @@ public:
 public:
     void initBoundaryCollapseQueue();
     void initCollapseQueue();
+    void Simplify_with_Selected_Pole(int threshold, vector<vector<double>> &selected_pole);
     void Simplify(int threshold);
     void SimplifyBoudary(int threshold);
     bool MinCostBoundaryEdgeCollapse(unsigned & eid);
@@ -138,6 +142,7 @@ public:
     void EvaluateEdgeCollapseCost(unsigned eid);
     void EvaluateEdgeHausdorffCost(unsigned eid);
     void ReEvaluateEdgeHausdorffCost(unsigned eid);
+    void readMA_ball_diff_radius(string objpath, vector<vector<double> >& vset, vector<vector<int> >& eset, vector<vector<int> >& fset);
 
 public:
     void DistinguishVertexType();
@@ -161,6 +166,7 @@ public:
 
     void ExportSimplifyResult();
     void Export(string fname, Mesh* mesh);
+    void Export_OBJ(std::string fname, Mesh* mesh);
 
 public:
     void clear();

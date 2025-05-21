@@ -1,3 +1,8 @@
 *.DS_Store*
 *.vscode/*
 *build*
+.cache
+*.zip
+data/offs
+*.txt
+data/*.obj

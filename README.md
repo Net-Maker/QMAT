@@ -30,7 +30,7 @@ And please cite the original paper:
 ### Tested on:
 - MacOS M3 
 - Windows 
-
+- Ubuntu22.04
 
 ### Requirements
 
@@ -43,6 +43,10 @@ And please cite the original paper:
 - CMake (3.16)
 
 - OpenMP (MacOS)
+
+- gcc-9(Ubuntu) `sudo apt install gcc-9`
+
+- libgmp(Ubuntu) `sudo apt install libgmp-dev`
 
 
 ## Installation & Run

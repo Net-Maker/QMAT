@@ -332,6 +332,43 @@ void simplifySlab(SlabMesh* slabMesh, Mesh* mesh, unsigned num_spheres) {
   std::cout << "Simplify done." << std::endl;
 }
 
+
+void test_simplify_with_selected_pole(SlabMesh* slabMesh, Mesh* mesh, unsigned num_spheres) {
+  slabMesh->CleanIsolatedVertices();
+  // int threhold = min(10000, (int)(slabMesh->numVertices / 2));
+  int threhold = num_spheres;
+  vector<vector<double> > selected_pole;
+
+  // bool ok = true;
+  // int simplifyNum = min(10000, (int)(slabMesh->numVertices / 2));
+  // if (ok)
+  //     threhold = simplifyNum;
+  // else
+  //     return;
+
+  // if(slabMesh == NULL)
+  //     return;
+
+  // long start_time = clock();
+  // slabMesh->initCollapseQueue();
+  // slabMesh->initBoundaryCollapseQueue();
+  slabMesh->Simplify_with_Selected_Pole(slabMesh->numVertices - threhold, selected_pole);
+  slabMesh->Export_OBJ("/home/wjx/research/code/GaussianAnimator/QMAT/data/sim_MA", mesh);
+  // long end_time = clock();
+  //
+  // std::string res;
+  // std::stringstream ss;
+  // ss << end_time - start_time;
+  // ss >> res;
+
+  slabMesh->ComputeFacesNormal();
+  slabMesh->ComputeVerticesNormal();
+  slabMesh->ComputeEdgesCone();
+  slabMesh->ComputeFacesSimpleTriangles();
+
+  std::cout << "Simplify with selected pole done." << std::endl;
+}
+
 int main(int argc, char** argv) {
   if (4 > argc) {
     std::cerr << "Usage: " << argv[0]
@@ -350,10 +387,13 @@ int main(int argc, char** argv) {
   SlabMesh* pslabMesh = &slabMesh;
   openmeshfile(pinput, pslabMesh, filename, maname);
   printf("done openmeshfile\n");
-  simplifySlab(pslabMesh, pinput, num_spheres);
-  printf("done simplifyslab\n");
-  pslabMesh->Export("export_half", pinput);
-  printf("done export\n");
+  // simplifySlab(pslabMesh, pinput, num_spheres);
+  // printf("done simplifyslab\n");
+  printf("test simplify with selected pole\n");
+  test_simplify_with_selected_pole(pslabMesh, pinput, num_spheres);
+  printf("done test simplify with selected pole\n");
+  // pslabMesh->Export("export_half", pinput);
+  // printf("done export\n");
 
   return 0;
 }

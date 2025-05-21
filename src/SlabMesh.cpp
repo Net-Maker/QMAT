@@ -1207,6 +1207,12 @@ bool SlabMesh::MinCostEdgeCollapse(unsigned & eid){
             int min_index = 0;
             if (Contractible(v1, v2, vertices[v1].second->sphere.center))
             {
+                cout << "checking ... " << endl;
+				if (vertices[v1].second->is_selected == 1) {
+					cout << "I catch you at v1" << endl;
+					int stops;
+					cin >> stops;
+				}
                 min_sphere[count] = vertices[v1].second->sphere;
                 min_vertex = Vector4d(min_sphere[count].center.X(), min_sphere[count].center.Y(), min_sphere[count].center.Z(), min_sphere[count].radius);
                 collapse_costs[count] = 0.5 * (min_vertex * A).Dot(min_vertex) - b.Dot(min_vertex) + c;
@@ -1214,6 +1220,12 @@ bool SlabMesh::MinCostEdgeCollapse(unsigned & eid){
             }
             if (Contractible(v1, v2, vertices[v2].second->sphere.center))
             {
+                cout << "checking ... " << endl;
+				if (vertices[v2].second->is_selected == 1) {
+					cout << "I catch you at v2" << endl;
+					int stops2;
+					cin >> stops2;
+				}
                 min_sphere[count] = vertices[v2].second->sphere;
                 min_vertex = Vector4d(min_sphere[count].center.X(), min_sphere[count].center.Y(), min_sphere[count].center.Z(), min_sphere[count].radius);
                 collapse_costs[count] = 0.5 * (min_vertex * A).Dot(min_vertex) - b.Dot(min_vertex) + c;
@@ -1222,6 +1234,12 @@ bool SlabMesh::MinCostEdgeCollapse(unsigned & eid){
             auto tempCenter = (vertices[v1].second->sphere.center + vertices[v2].second->sphere.center) / 2.0;
             if (Contractible(v1, v2, tempCenter))
             {
+                cout << "checking ... " << endl;
+				if (vertices[v2].second->is_selected == 1) {
+					cout << "I catch you at mid" << endl;
+					int stops2;
+					cin >> stops2;
+				}
                 min_sphere[count] = (vertices[v1].second->sphere + vertices[v2].second->sphere) * 0.5;
                 min_vertex = Vector4d(min_sphere[count].center.X(), min_sphere[count].center.Y(), min_sphere[count].center.Z(), min_sphere[count].radius);
                 collapse_costs[count] = 0.5 * (min_vertex * A).Dot(min_vertex) - b.Dot(min_vertex) + c;
@@ -1915,6 +1933,318 @@ void SlabMesh::ReEvaluateEdgeHausdorffCost(unsigned eid)
     edges[eid].second->sphere.center = Wm4::Vector3d(lamdar.X(), lamdar.Y(), lamdar.Z());
     edges[eid].second->sphere.radius = lamdar.W();
 }
+
+vector<string> SlabMesh::my_split(const string &str, const string &pattern)
+{
+	//just for quick test...
+	//�����ַ������и�
+	//const char* convert to char*
+	char * strc = new char[strlen(str.c_str()) + 1];
+	strcpy(strc, str.c_str());
+	vector<string> resultVec;
+	char* tmpStr = strtok(strc, pattern.c_str());
+	while (tmpStr != NULL)
+	{
+		resultVec.push_back(string(tmpStr));
+		tmpStr = strtok(NULL, pattern.c_str());
+	}
+
+	delete[] strc;
+
+	return resultVec;
+}
+
+void SlabMesh::readMA_ball_diff_radius(string objpath, vector<vector<double> >& vset, vector<vector<int> >& eset, vector<vector<int> >& fset) {
+	/* ��ȡ��MA�ļ�
+	* �ڶ�ȡ֮ǰ�ǵ�Ҫ�Ƚ���λ�����
+	* */
+	string line;
+	fstream f;
+	f.open(objpath, ios::in);
+	if (!f.is_open())
+		std::cout << "�ļ��򿪳���" << endl;
+	int v_counter = 1;
+	int f_counter = 1;
+	while (!f.eof()) {
+		getline(f, line);//�õ�obj�ļ���һ�У���Ϊһ���ַ���
+		vector <string> parameters;
+		string tailMark = " ";
+		string ans = "";
+		line = line.append(tailMark);
+		std::cout << line << endl;
+		
+		if (line[0] != 'v' && line[0] != 'f' && line[0] != 'e')
+			continue;
+		for (int i = 0; i < line.length(); i++) {
+			char ch = line[i];
+			if (ch != ' ') {
+				ans += ch;
+			}
+			else {
+				if (ans != "") {
+					parameters.push_back(ans); //ȡ���ַ����е�Ԫ�أ��Կո��з�
+					ans = "";
+				}
+			}
+		}
+		if (parameters[0] == "v") {   //����Ƕ���Ļ�
+									  //�����
+			vector<double> Point;
+			v_counter++;
+			Point.push_back(atof(parameters[1].c_str()));
+			Point.push_back(atof(parameters[2].c_str()));
+			Point.push_back(atof(parameters[3].c_str()));
+			Point.push_back(fabs(atof(parameters[4].c_str())));//�뾶��Ϣ
+			vset.push_back(Point);
+		}
+		else if (parameters[0] == "e") {
+			vector<int> Edge;   //ʹ��int��Ϊindex
+			Edge.push_back(atof(parameters[1].c_str()));
+			Edge.push_back(atof(parameters[2].c_str()));
+			eset.push_back(Edge);
+			//�����
+		}
+		else if (parameters[0] == "f") {   //�������Ļ�����Ŷ��������
+										   //������
+			vector<int> vIndexSets;          //��ʱ��ŵ�ļ���
+			for (int i = 1; i < 4; i++) {
+				string x = parameters[i];
+				string ans = "";
+				for (int j = 0; j < x.length(); j++) {   //������/��
+					char ch = x[j];
+					if (ch != '/')
+						ans += ch;
+					else
+						break;
+				}
+				vector <string> res = my_split(ans, "/");
+				int index = atof(res[0].c_str());
+				index--;//��Ϊ����������obj�ļ����Ǵ�1��ʼ�ģ������Ǵ�ŵĶ���vector�Ǵ�0��ʼ�ģ����Ҫ��1
+				vIndexSets.push_back(index);
+			}
+			fset.push_back(vIndexSets);
+		}
+
+	}
+	f.close();
+	int vert_number = vset.size();
+	int face_number = fset.size();
+	int edge_number = eset.size();
+	std::cout << "vnumber" << vert_number << endl;
+	std::cout << "fnumber" << face_number << endl;
+	std::cout << "enumber" << edge_number << endl;
+	//������еĵ������ܵ�һ��obj�ļ���
+	//����������ǵĽ��
+	
+
+}
+
+double SlabMesh::p_distance(double x1, double y1, double z1, double x2, double y2, double z2) {
+	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
+
+}
+void SlabMesh::Simplify_with_Selected_Pole(int threshold, vector<vector<double> >& selected_pole){
+
+	// Their setting...
+	/*
+	Zhiyang: 
+	1. Here we first introduce our selected poles.
+	2. Get the corresponding vertex index.
+	3. Do not remove these points...
+	*/
+
+
+	vector<vector<double> > vset;
+
+	vector<vector<int> >eset;
+	vector<vector<int> > fset;
+
+	cout << "simplifying..." << endl;
+
+
+
+	int preserve_num = 30;
+    readMA_ball_diff_radius("/home/wjx/research/code/GaussianAnimator/QMAT/data/mesh_selected_inner_points.txt", vset, eset, fset); // 49
+
+	std::ofstream fsout("/home/wjx/research/code/GaussianAnimator/QMAT/data/test_all_poles.obj");
+	for (int vid = 0; vid < vertices.size(); vid++) {
+		fsout << "v " << vertices[vid].second->sphere.center << endl;
+	}
+	fsout.close();
+
+	// then we iterate in vertices set and label them...
+    // 遍历读取的极点，找到网格中最接近的顶点
+	for (int select_id = 0;select_id < vset.size(); select_id++) {
+		double min_dis = 999999;
+		int min_idx = -1;
+        // 找到距离CA结果中最近的MA上的顶点
+		for (int vid = 0; vid < vertices.size(); vid++) {
+			vertices[vid].second->is_non_manifold;
+
+			vertices[vid].second->sphere.center;
+			double temp_dis = p_distance(vset[select_id][0],
+				vset[select_id][1],
+				vset[select_id][2],
+				vertices[vid].second->sphere.center[0],
+				vertices[vid].second->sphere.center[1],
+				vertices[vid].second->sphere.center[2]);
+			if (temp_dis < min_dis 
+				&& vertices[vid].second->is_selected==0 
+				//&& vertices[vid].second->is_pole // No, it does not need to be pole...
+				) {
+				min_dis = temp_dis;
+				min_idx = vid;
+			}
+		}
+		vertices[min_idx].second->is_selected = 1;
+		vertices[min_idx].second->saved_vertex = 1;
+		vertices[min_idx].second->is_pole = 1;
+		vector<double> mPoint;
+		mPoint.push_back(vertices[min_idx].second->sphere.center[0]);
+		mPoint.push_back(vertices[min_idx].second->sphere.center[1]);
+		mPoint.push_back(vertices[min_idx].second->sphere.center[2]);
+		selected_pole.push_back(mPoint);
+
+	}
+	int check_count = 0;
+	
+	cout << "how many: " << check_count << " / "<< vset.size() << endl;
+
+	// this is for checking...
+	// double checked.
+	/*
+	std::ofstream fsout2("C://Users//frank//Desktop//nearest_poles.obj");
+	for (int vid = 0; vid < vertices.size(); vid++) {
+		if (vertices[vid].second->is_selected == 1) {
+			fsout2 << "v " << vertices[vid].second->sphere.center << endl;
+		}
+	}
+	fsout2.close();
+	for (int vid = 0; vid < vertices.size(); vid++) {
+		if (vertices[vid].second->is_selected == 1) {
+			cout << "v " << vertices[vid].second->sphere.center << endl;
+			cout << "is_pole: " << vertices[vid].second->is_pole << endl;
+			cout << "is_non_manifold: " << vertices[vid].second->is_non_manifold << endl;
+			cout << "is_disk: " << vertices[vid].second->is_disk << endl;
+			cout << "is_boundary: " << vertices[vid].second->is_boundary << endl;
+			cout << "is_selected" << vertices[vid].second->is_selected << endl;
+			cout << "-----------------------------" << endl;
+			
+		}
+	}*/
+
+	//int sss;
+
+
+
+		// find the nearest one...
+	
+
+
+	// ���򻯵�С��50������ʱ������������˵�ı߽��кϲ�
+	//
+	if (numVertices <= preserve_num)
+	{
+		if (initial_boundary_preserve == false)
+		{
+			initial_boundary_preserve = true;
+			InitialTopologyProperty();
+			for (int i = 0; i < vertices.size(); i++)
+			{
+				if (vertices[i].first)
+				{
+					set<unsigned> fir_edges = vertices[i].second->edges_;
+					for (set<unsigned>::iterator si = fir_edges.begin(); si != fir_edges.end(); si++)
+					{
+						int index = edges[*si].second->vertices_.first == i ? 
+							edges[*si].second->vertices_.second : edges[*si].second->vertices_.first;
+
+						if (vertices[index].second->edges_.size() == 1 && vertices[index].second->faces_.size() == 0)
+						{
+							edges[*si].second->topo_contractable = false;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// this is for selected poles:
+	
+		
+	// This is the key simplification process.
+	int deleteSphereNum = 0;
+	if (!boundary_edge_collapses_queue.empty())
+	{
+		while (deleteSphereNum < threshold && numVertices > 1 && !boundary_edge_collapses_queue.empty())
+		{
+			EdgeInfo topEdge = boundary_edge_collapses_queue.top();
+			boundary_edge_collapses_queue.pop();
+			unsigned eid = topEdge.edge_num;
+			if(edges[eid].first && ValidVertex(edges[eid].second->vertices_.first) && ValidVertex(edges[eid].second->vertices_.second))
+			{
+				std::cout << edges[eid].second->vertices_.first << "  " << edges[eid].second->vertices_.second << endl;
+				std::cout << "Under the first condition --------------------------------------" << endl;
+				cout << "This is the first time we meet the situation... have a double check..." << endl;
+				cout << "Slabmesh.cpp Line 2155" << endl;
+				int stophere;
+				cin >> stophere;
+				if (MinCostBoundaryEdgeCollapse(eid)) 
+					deleteSphereNum ++;    
+			} 
+		} 
+	}else
+	{ // second condition...
+		while (deleteSphereNum < threshold && numVertices > 1 && !edge_collapses_queue.empty())
+		{
+			//if (maxhausdorff_distance / pmesh->bb_diagonal_length >= end_multi)
+			//	break;
+
+			//if (sqrt(max_mean_squre_error) / pmesh->bb_diagonal_length >= end_multi)
+			//	break;
+
+			EdgeInfo topEdge = edge_collapses_queue.top();
+			edge_collapses_queue.pop(); 
+			unsigned eid = topEdge.edge_num;
+			if(edges[eid].first && ValidVertex(edges[eid].second->vertices_.first) && ValidVertex(edges[eid].second->vertices_.second)
+				&& (vertices[edges[eid].second->vertices_.first].second->saved_vertex == 0 || vertices[edges[eid].second->vertices_.second].second->saved_vertex == 0)
+			)
+			{
+
+				//cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+				//cout << "Under the second condition --------------------------------------" << endl;
+
+					
+				// read the points in...
+
+				//
+
+				//cout << edges[eid].second->vertices_.first << endl;
+				//cout << vertices[edges[eid].second->vertices_.first].first << endl;
+				//cout << vertices[edges[eid].second->vertices_.first].second->sphere.center << endl;
+				//if (deleteSphereNum == 36002) {
+				//	break;
+				//}
+				if (MinCostEdgeCollapse(eid))
+				{
+					deleteSphereNum++;
+					//cout <<"hhh deleting in Simplify_Select_Pole..."<< deleteSphereNum << " / "<< vertices.size() << endl;
+				}
+			}
+
+			//if (maxhausdorff_distance / pmesh->bb_diagonal_length >= start_multi)
+			//	GetSavedPointNumber();
+
+			//if (sqrt(max_mean_squre_error) / pmesh->bb_diagonal_length >= start_multi)
+			//	GetSavedPointNumber();
+		}
+	}
+}
+
+
+
+
+
 
 void SlabMesh::Simplify(int threshold){
 
@@ -2910,6 +3240,56 @@ void SlabMesh::ExportSimplifyResult()
     //f_result_out << simplified_boundary_edges << "\t" << simplified_inside_edges << "\t" << maxhausdorff_distance << endl;
 }
 
+void SlabMesh::Export_OBJ(std::string fname, Mesh* mesh) {
+    fname += "___v_";
+    fname += std::to_string(static_cast<long long>(numVertices));
+    fname += "___e_";
+    fname += std::to_string(static_cast<long long>(numEdges));
+    fname += "___f_";
+    fname += std::to_string(static_cast<long long>(numFaces));
+
+    AdjustStorage();
+
+    std::string maname = fname;
+    maname += ".obj";
+
+    std::ofstream fout(maname);
+    if (!fout.is_open()) {
+        std::cerr << "ERROR:无法打开文件 " << maname << " 用于写入(Export_OBJ)" << std::endl;
+        return;
+    }
+
+
+    // 导出有效顶点
+    for (unsigned i = 0; i < vertices.size(); i++) {
+        if (vertices[i].first && vertices[i].second) {
+            fout << "v " << setiosflags(ios::fixed) << setprecision(15) 
+                 << (vertices[i].second->sphere.center * mesh->bb_diagonal_length) << " " 
+                 << (vertices[i].second->sphere.radius * mesh->bb_diagonal_length) << std::endl;
+        }
+    }
+
+    // 导出有效边
+    for (unsigned i = 0; i < edges.size(); i++) {
+        if (edges[i].first && edges[i].second) {
+            fout << "l " << edges[i].second->vertices_.first+1 << " " 
+                 << edges[i].second->vertices_.second+1 << std::endl;
+        }
+    }
+
+    // 导出有效面
+    for (unsigned i = 0; i < faces.size(); i++) {
+        if (faces[i].first && faces[i].second) {
+            fout << "f";
+            for (std::set<unsigned>::iterator si = faces[i].second->vertices_.begin();
+                si != faces[i].second->vertices_.end(); si++)
+                fout << " " << *si+1;
+            fout << std::endl;
+        }
+    }
+    fout.close();
+}
+
 void SlabMesh::Export(std::string fname, Mesh* mesh){
     fname += "___v_";
     fname += std::to_string(static_cast<long long>(numVertices));
@@ -3028,3 +3408,4 @@ void SlabMesh::InitialTopologyProperty() {
         }
     }
 }
+
