@@ -134,7 +134,7 @@ public:
 public:
     void initBoundaryCollapseQueue();
     void initCollapseQueue();
-    void Simplify_with_Selected_Pole(int threshold, vector<vector<double>> &selected_pole);
+    void Simplify_with_Selected_Pole(int threshold, vector<vector<double>> &selected_pole, std::string selected_file_path, std::string output_file_path);
     void Simplify(int threshold);
     void SimplifyBoudary(int threshold);
     bool MinCostBoundaryEdgeCollapse(unsigned & eid);

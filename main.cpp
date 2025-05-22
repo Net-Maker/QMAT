@@ -333,7 +333,7 @@ void simplifySlab(SlabMesh* slabMesh, Mesh* mesh, unsigned num_spheres) {
 }
 
 
-void test_simplify_with_selected_pole(SlabMesh* slabMesh, Mesh* mesh, unsigned num_spheres) {
+void test_simplify_with_selected_pole(SlabMesh* slabMesh, Mesh* mesh, unsigned num_spheres, std::string selected_file_path, std::string output_file_path) {
   slabMesh->CleanIsolatedVertices();
   // int threhold = min(10000, (int)(slabMesh->numVertices / 2));
   int threhold = num_spheres;
@@ -352,8 +352,7 @@ void test_simplify_with_selected_pole(SlabMesh* slabMesh, Mesh* mesh, unsigned n
   // long start_time = clock();
   // slabMesh->initCollapseQueue();
   // slabMesh->initBoundaryCollapseQueue();
-  slabMesh->Simplify_with_Selected_Pole(slabMesh->numVertices - threhold, selected_pole);
-  slabMesh->Export_OBJ("/home/wjx/research/code/GaussianAnimator/QMAT/data/sim_MA", mesh);
+  slabMesh->Simplify_with_Selected_Pole(slabMesh->numVertices - threhold, selected_pole, selected_file_path, output_file_path);
   // long end_time = clock();
   //
   // std::string res;
@@ -370,30 +369,75 @@ void test_simplify_with_selected_pole(SlabMesh* slabMesh, Mesh* mesh, unsigned n
 }
 
 int main(int argc, char** argv) {
-  if (4 > argc) {
+  if (argc < 5) {
     std::cerr << "Usage: " << argv[0]
-              << " <surface_mesh.off> <medial_mesh.ma> <num_target_spheres>"
+              << " <mode> <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> [selected_points.txt]"
+              << std::endl
+              << "  mode: 1 - Regular simplification, 2 - Simplification with selected poles" 
               << std::endl;
     return 1;
   }
-  std::string filename = argv[1];
-  std::string maname = argv[2];
-  unsigned num_spheres = atoi(argv[3]);
-  printf("reading off file %s\n", filename.c_str());
+  
+  int mode = atoi(argv[1]);
+  std::string filename = argv[2];
+  std::string maname = argv[3];
+  unsigned num_spheres = atoi(argv[4]);
+  
+  printf("Mode: %d\n", mode);
+  printf("Reading off file: %s\n", filename.c_str());
+  printf("Reading ma file: %s\n", maname.c_str());
+  printf("Target number of spheres: %u\n", num_spheres);
 
   Mesh input;
   Mesh* pinput = &input;
   SlabMesh slabMesh;
   SlabMesh* pslabMesh = &slabMesh;
+  
+  // 打开和读取网格文件
   openmeshfile(pinput, pslabMesh, filename, maname);
-  printf("done openmeshfile\n");
-  // simplifySlab(pslabMesh, pinput, num_spheres);
-  // printf("done simplifyslab\n");
-  printf("test simplify with selected pole\n");
-  test_simplify_with_selected_pole(pslabMesh, pinput, num_spheres);
-  printf("done test simplify with selected pole\n");
-  // pslabMesh->Export("export_half", pinput);
-  // printf("done export\n");
+  printf("Done openmeshfile\n");
+  
+  // 根据模式选择简化方法
+  if (mode == 1) {
+    // 模式1：常规简化
+    printf("Running regular simplification...\n");
+    simplifySlab(pslabMesh, pinput, num_spheres);
+    printf("Done regular simplification\n");
+  } 
+  else if (mode == 2) {
+    // 模式2：使用选定极点的简化
+    if (argc < 6) {
+      std::cerr << "Error: Mode 2 requires selected_points.txt file path" << std::endl;
+      return 1;
+    }
+    
+    std::string selected_points_file = argv[5];
+    std::string output_obj_file = "./data/test_all_poles.obj";  // 默认输出文件
+    
+    // 如果提供了输出文件路径，则使用它
+    if (argc >= 7) {
+      output_obj_file = argv[6];
+    }
+    
+    printf("Selected points file: %s\n", selected_points_file.c_str());
+    printf("Output OBJ file: %s\n", output_obj_file.c_str());
+    printf("Running simplification with selected poles...\n");
+    
+    test_simplify_with_selected_pole(pslabMesh, pinput, num_spheres, 
+                                   selected_points_file, output_obj_file);
+    
+    printf("Done simplification with selected poles\n");
+  }
+  else {
+    std::cerr << "Error: Invalid mode. Use 1 for regular simplification or 2 for simplification with selected poles." << std::endl;
+    return 1;
+  }
+  
+  // 导出结果
+  printf("Exporting results...\n");
+  pslabMesh->Export_OBJ("./data/sim_MA", pinput);
+  pslabMesh->Export("export_half", pinput);
+  printf("Done export\n");
 
   return 0;
 }

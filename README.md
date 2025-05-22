@@ -48,6 +48,8 @@ And please cite the original paper:
 
 - libgmp(Ubuntu) `sudo apt install libgmp-dev`
 
+- NOTE: For Ubuntu users, if you have installed boost which is not 1.82.0, there might have some issues, `conda install boost==1.82.0` could solve this issue.
+
 
 ## Installation & Run
 
@@ -68,12 +70,41 @@ make -j4
 
 - Run the program:
 ```
-./QMAT <surface_mesh.off> <medial_mesh.ma> <num_target_spheres>
+./QMAT <mode> <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> [selected_points.txt] [output_obj_file]
 ```
 
-For example:
+The program supports two running modes:
+
+1. **Mode 1: Regular Simplification**
+   ```
+   ./QMAT 1 <surface_mesh.off> <medial_mesh.ma> <num_target_spheres>
+   ```
+   This mode performs the standard Q-MAT simplification.
+
+2. **Mode 2: Simplification with Selected Poles**
+   ```
+   ./QMAT 2 <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> <selected_points.txt> [output_obj_file]
+   ```
+   This mode performs simplification while preserving selected poles. The selected poles should be provided in the `selected_points.txt` file using the following format:
+   ```
+   v x y z r
+   v x y z r
+   ...
+   ```
+   You can generate the points with others MAT methods and establish connections by using this mode. For example, we use [CoverageAxis](https://github.com/Frank-ZY-Dou/Coverage_Axis) to generate seleted_points.
+
+   The optional `output_obj_file` parameter specifies the path for the output OBJ file. If not provided, it defaults to `./data/test_all_poles.obj`.
+
+### Examples:
+
+Regular simplification:
 ```
-./QMAT ../data/bug.off ../data/bug.ma 200 
+./QMAT 1 ../data/bug.off ../data/bug.ma 200 
+```
+
+Simplification with selected poles:
+```
+./QMAT 2 ../data/bug.off ../data/bug.ma 200 ../data/selected_points.txt
 ```
 
 ## The **.ma** Format
@@ -87,7 +118,7 @@ f v1 v2 v3
 One can load the *.ma file using **Blender** with an open-sourced [blender-mat-addon](https://github.com/songshibo/blender-mat-addon).
 
 ## Q&A
-1. For MacOS, resolving `clang: error: unsupported option ‘-fopenmp’`:
+1. For MacOS, resolving `clang: error: unsupported option '-fopenmp'`:
 
 The problem is that **AppleClang** does not support `-fopenmp`, one should use brew's 'llvm'.
   

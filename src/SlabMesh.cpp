@@ -1991,10 +1991,10 @@ void SlabMesh::readMA_ball_diff_radius(string objpath, vector<vector<double> >& 
 									  //�����
 			vector<double> Point;
 			v_counter++;
-			Point.push_back(atof(parameters[1].c_str()));
-			Point.push_back(atof(parameters[2].c_str()));
-			Point.push_back(atof(parameters[3].c_str()));
-			Point.push_back(fabs(atof(parameters[4].c_str())));//�뾶��Ϣ
+			Point.push_back(atof(parameters[1].c_str())); // x
+			Point.push_back(atof(parameters[2].c_str())); // y
+			Point.push_back(atof(parameters[3].c_str())); // z
+			Point.push_back(fabs(atof(parameters[4].c_str())));// r
 			vset.push_back(Point);
 		}
 		else if (parameters[0] == "e") {
@@ -2043,7 +2043,7 @@ double SlabMesh::p_distance(double x1, double y1, double z1, double x2, double y
 	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
 
 }
-void SlabMesh::Simplify_with_Selected_Pole(int threshold, vector<vector<double> >& selected_pole){
+void SlabMesh::Simplify_with_Selected_Pole(int threshold, vector<vector<double> >& selected_pole, std::string selected_file_path, std::string output_file_path){
 
 	// Their setting...
 	/*
@@ -2064,9 +2064,9 @@ void SlabMesh::Simplify_with_Selected_Pole(int threshold, vector<vector<double> 
 
 
 	int preserve_num = 30;
-    readMA_ball_diff_radius("/home/wjx/research/code/GaussianAnimator/QMAT/data/mesh_selected_inner_points.txt", vset, eset, fset); // 49
+    readMA_ball_diff_radius(selected_file_path, vset, eset, fset); // 49
 
-	std::ofstream fsout("/home/wjx/research/code/GaussianAnimator/QMAT/data/test_all_poles.obj");
+	std::ofstream fsout(output_file_path);
 	for (int vid = 0; vid < vertices.size(); vid++) {
 		fsout << "v " << vertices[vid].second->sphere.center << endl;
 	}
