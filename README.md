@@ -70,20 +70,20 @@ make -j4
 
 - Run the program:
 ```
-./QMAT <mode> <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> [selected_points.txt] [output_obj_file]
+./QMAT <mode> <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> [output_path] [selected_points.txt]
 ```
 
 The program supports two running modes:
 
 1. **Mode 1: Regular Simplification**
    ```
-   ./QMAT 1 <surface_mesh.off> <medial_mesh.ma> <num_target_spheres>
+   ./QMAT 1 <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> [output_path]
    ```
    This mode performs the standard Q-MAT simplification.
 
 2. **Mode 2: Simplification with Selected Poles**
    ```
-   ./QMAT 2 <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> <selected_points.txt> [output_obj_file]
+   ./QMAT 2 <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> [output_path] <selected_points.txt>
    ```
    This mode performs simplification while preserving selected poles. The selected poles should be provided in the `selected_points.txt` file using the following format:
    ```
@@ -91,20 +91,42 @@ The program supports two running modes:
    v x y z r
    ...
    ```
-   You can generate the points with others MAT methods and establish connections by using this mode. For example, we use [CoverageAxis](https://github.com/Frank-ZY-Dou/Coverage_Axis) to generate seleted_points.
+   You can generate the points with others MAT methods and establish connections by using this mode. For example, we use [CoverageAxis](https://github.com/Frank-ZY-Dou/Coverage_Axis) to generate selected_points.
 
-   The optional `output_obj_file` parameter specifies the path for the output OBJ file. If not provided, it defaults to `./data/test_all_poles.obj`.
+### Parameters:
+- `mode`: 1 for regular simplification, 2 for simplification with selected poles
+- `surface_mesh.off`: Input surface mesh file in OFF format
+- `medial_mesh.ma`: Input medial axis file in MA format
+- `num_target_spheres`: Target number of spheres after simplification
+- `output_path`: (Optional) Directory to save output files. Default is `./data/`. The path should end with `/`
+- `selected_points.txt`: (Required for mode 2) File containing selected poles to preserve
+
+### Output Files:
+All output files will be saved to the specified `output_path` directory:
+- `sim_MA___v_X___e_Y___f_Z.obj`: Simplified medial axis in OBJ format
+- `export_half___v_X___e_Y___f_Z.ma`: Simplified medial axis in MA format
+- `test_all_poles.obj`: (Mode 2 only) All poles visualization file
 
 ### Examples:
 
-Regular simplification:
+Regular simplification with default output path:
 ```
-./QMAT 1 ../data/bug.off ../data/bug.ma 200 
+./QMAT 1 ../data/bug.off ../data/bug.ma 200
+```
+
+Regular simplification with custom output path:
+```
+./QMAT 1 ../data/bug.off ../data/bug.ma 200 /home/user/output/
 ```
 
 Simplification with selected poles:
 ```
-./QMAT 2 ../data/bug.off ../data/bug.ma 200 ../data/selected_points.txt
+./QMAT 2 ../data/bug.off ../data/bug.ma 200 ./results/ ../data/selected_points.txt
+```
+
+Simplification with selected poles using default output path:
+```
+./QMAT 2 ../data/bug.off ../data/bug.ma 200 ./data/ ../data/selected_points.txt
 ```
 
 ## The **.ma** Format

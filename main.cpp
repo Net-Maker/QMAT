@@ -371,9 +371,11 @@ void test_simplify_with_selected_pole(SlabMesh* slabMesh, Mesh* mesh, unsigned n
 int main(int argc, char** argv) {
   if (argc < 5) {
     std::cerr << "Usage: " << argv[0]
-              << " <mode> <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> [selected_points.txt]"
+              << " <mode> <surface_mesh.off> <medial_mesh.ma> <num_target_spheres> [output_path] [selected_points.txt]"
               << std::endl
               << "  mode: 1 - Regular simplification, 2 - Simplification with selected poles" 
+              << std::endl
+              << "  output_path: Directory to save output files (optional, default: ./data/)"
               << std::endl;
     return 1;
   }
@@ -383,10 +385,21 @@ int main(int argc, char** argv) {
   std::string maname = argv[3];
   unsigned num_spheres = atoi(argv[4]);
   
+  // 设置输出路径，默认为 ./data/
+  std::string output_path = "./data/";
+  if (argc >= 6) {
+    output_path = argv[5];
+    // 确保路径以 / 结尾
+    if (output_path.back() != '/') {
+      output_path += "/";
+    }
+  }
+  
   printf("Mode: %d\n", mode);
   printf("Reading off file: %s\n", filename.c_str());
   printf("Reading ma file: %s\n", maname.c_str());
   printf("Target number of spheres: %u\n", num_spheres);
+  printf("Output path: %s\n", output_path.c_str());
 
   Mesh input;
   Mesh* pinput = &input;
@@ -406,18 +419,13 @@ int main(int argc, char** argv) {
   } 
   else if (mode == 2) {
     // 模式2：使用选定极点的简化
-    if (argc < 6) {
+    if (argc < 7) {
       std::cerr << "Error: Mode 2 requires selected_points.txt file path" << std::endl;
       return 1;
     }
     
-    std::string selected_points_file = argv[5];
-    std::string output_obj_file = "./data/test_all_poles.obj";  // 默认输出文件
-    
-    // 如果提供了输出文件路径，则使用它
-    if (argc >= 7) {
-      output_obj_file = argv[6];
-    }
+    std::string selected_points_file = argv[6];
+    std::string output_obj_file = output_path + "test_all_poles.obj";
     
     printf("Selected points file: %s\n", selected_points_file.c_str());
     printf("Output OBJ file: %s\n", output_obj_file.c_str());
@@ -433,10 +441,13 @@ int main(int argc, char** argv) {
     return 1;
   }
   
-  // 导出结果
+  // 导出结果到指定输出路径
   printf("Exporting results...\n");
-  pslabMesh->Export_OBJ("./data/sim_MA", pinput);
-  pslabMesh->Export("export_half", pinput);
+  std::string sim_ma_path = output_path + "sim_MA";
+  std::string export_half_path = output_path + "export_half";
+  
+  pslabMesh->Export_OBJ(sim_ma_path, pinput);
+  pslabMesh->Export(export_half_path, pinput);
   printf("Done export\n");
 
   return 0;
