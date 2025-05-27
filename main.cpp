@@ -336,7 +336,7 @@ void simplifySlab(SlabMesh* slabMesh, Mesh* mesh, unsigned num_spheres) {
 void test_simplify_with_selected_pole(SlabMesh* slabMesh, Mesh* mesh, unsigned num_spheres, std::string selected_file_path, std::string output_file_path) {
   slabMesh->CleanIsolatedVertices();
   // int threhold = min(10000, (int)(slabMesh->numVertices / 2));
-  int threhold = num_spheres;
+  int threhold = num_spheres; // would not be used in latter process
   vector<vector<double> > selected_pole;
 
   // bool ok = true;
@@ -352,7 +352,7 @@ void test_simplify_with_selected_pole(SlabMesh* slabMesh, Mesh* mesh, unsigned n
   // long start_time = clock();
   // slabMesh->initCollapseQueue();
   // slabMesh->initBoundaryCollapseQueue();
-  slabMesh->Simplify_with_Selected_Pole(slabMesh->numVertices - threhold, selected_pole, selected_file_path, output_file_path);
+  slabMesh->Simplify_with_Selected_Pole(slabMesh->numVertices, selected_pole, selected_file_path, output_file_path);
   // long end_time = clock();
   //
   // std::string res;

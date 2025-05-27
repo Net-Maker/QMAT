@@ -2067,10 +2067,13 @@ void SlabMesh::Simplify_with_Selected_Pole(int threshold, vector<vector<double> 
     readMA_ball_diff_radius(selected_file_path, vset, eset, fset); // 49
 
 	std::ofstream fsout(output_file_path);
+    int v_counter = 0;
 	for (int vid = 0; vid < vertices.size(); vid++) {
 		fsout << "v " << vertices[vid].second->sphere.center << endl;
+        v_counter++;
 	}
 	fsout.close();
+    threshold -= v_counter;
 
 	// then we iterate in vertices set and label them...
     // 遍历读取的极点，找到网格中最接近的顶点
