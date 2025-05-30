@@ -1963,7 +1963,7 @@ void SlabMesh::readMA_ball_diff_radius(string objpath, vector<vector<double> >& 
 	fstream f;
 	f.open(objpath, ios::in);
 	if (!f.is_open())
-		std::cout << "�ļ��򿪳���" << endl;
+		std::cout << "ERROR:ma file not open" << endl;
 	int v_counter = 1;
 	int f_counter = 1;
 	while (!f.eof()) {
@@ -1972,7 +1972,7 @@ void SlabMesh::readMA_ball_diff_radius(string objpath, vector<vector<double> >& 
 		string tailMark = " ";
 		string ans = "";
 		line = line.append(tailMark);
-		std::cout << line << endl;
+		//std::cout << line << endl;
 		
 		if (line[0] != 'v' && line[0] != 'f' && line[0] != 'e')
 			continue;
@@ -2031,11 +2031,11 @@ void SlabMesh::readMA_ball_diff_radius(string objpath, vector<vector<double> >& 
 	int vert_number = vset.size();
 	int face_number = fset.size();
 	int edge_number = eset.size();
-	std::cout << "vnumber" << vert_number << endl;
-	std::cout << "fnumber" << face_number << endl;
-	std::cout << "enumber" << edge_number << endl;
-	//������еĵ������ܵ�һ��obj�ļ���
-	//����������ǵĽ��
+	// std::cout << "vnumber" << vert_number << endl;
+	// std::cout << "fnumber" << face_number << endl;
+	// std::cout << "enumber" << edge_number << endl;
+	// //������еĵ������ܵ�һ��obj�ļ���
+	// //����������ǵĽ��
 	
 
 }
@@ -2068,9 +2068,9 @@ void SlabMesh::Simplify_with_Selected_Pole(int threshold, vector<vector<double> 
     readMA_ball_diff_radius(selected_file_path, vset, eset, fset); // 49
 
 	std::ofstream fsout(output_file_path);
-	for (int vid = 0; vid < vertices.size(); vid++) {
-		fsout << "v " << vertices[vid].second->sphere.center << endl;
-	}
+	// for (int vid = 0; vid < vertices.size(); vid++) {
+	// 	fsout << "v " << vertices[vid].second->sphere.center << endl;
+	// }
 	fsout.close();
     threshold = threshold - vset.size();
 
