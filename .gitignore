@@ -4,7 +4,6 @@
 .cache
 *.zip
 data/offs
-*.txt
 data/*.obj
 data/*.png
 data/*.py
