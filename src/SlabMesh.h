@@ -87,6 +87,8 @@ public:
 
     double bound_weight;
 
+    double bb_diagonal_length;
+
 public:
     void AdjustStorage();
 

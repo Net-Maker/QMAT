@@ -1992,10 +1992,10 @@ void SlabMesh::readMA_ball_diff_radius(string objpath, vector<vector<double> >& 
 									  //�����
 			vector<double> Point;
 			v_counter++;
-			Point.push_back(atof(parameters[1].c_str())); // x
-			Point.push_back(atof(parameters[2].c_str())); // y
-			Point.push_back(atof(parameters[3].c_str())); // z
-			Point.push_back(fabs(atof(parameters[4].c_str())));// r
+			Point.push_back(atof(parameters[1].c_str())/bb_diagonal_length); // x
+			Point.push_back(atof(parameters[2].c_str())/bb_diagonal_length); // y
+			Point.push_back(atof(parameters[3].c_str())/bb_diagonal_length); // z
+			Point.push_back(fabs(atof(parameters[4].c_str())/bb_diagonal_length));// r
 			vset.push_back(Point);
 		}
 		else if (parameters[0] == "e") {
@@ -2114,26 +2114,31 @@ void SlabMesh::Simplify_with_Selected_Pole(int threshold, vector<vector<double> 
 
 	// this is for checking...
 	// double checked.
-	/*
-	std::ofstream fsout2("C://Users//frank//Desktop//nearest_poles.obj");
+	
+	std::ofstream fsout2("./nearest_poles.obj");
 	for (int vid = 0; vid < vertices.size(); vid++) {
 		if (vertices[vid].second->is_selected == 1) {
 			fsout2 << "v " << vertices[vid].second->sphere.center << endl;
 		}
 	}
 	fsout2.close();
-	for (int vid = 0; vid < vertices.size(); vid++) {
-		if (vertices[vid].second->is_selected == 1) {
-			cout << "v " << vertices[vid].second->sphere.center << endl;
-			cout << "is_pole: " << vertices[vid].second->is_pole << endl;
-			cout << "is_non_manifold: " << vertices[vid].second->is_non_manifold << endl;
-			cout << "is_disk: " << vertices[vid].second->is_disk << endl;
-			cout << "is_boundary: " << vertices[vid].second->is_boundary << endl;
-			cout << "is_selected" << vertices[vid].second->is_selected << endl;
-			cout << "-----------------------------" << endl;
+    std::ofstream fsout3("./vertices.obj");
+    for (int vid = 0; vid < vertices.size(); vid++) {
+        fsout3 << "v " << vertices[vid].second->sphere.center << endl;
+    }
+    fsout3.close();
+	// for (int vid = 0; vid < vertices.size(); vid++) {
+	// 	if (vertices[vid].second->is_selected == 1) {
+	// 		cout << "v " << vertices[vid].second->sphere.center << endl;
+	// 		cout << "is_pole: " << vertices[vid].second->is_pole << endl;
+	// 		cout << "is_non_manifold: " << vertices[vid].second->is_non_manifold << endl;
+	// 		cout << "is_disk: " << vertices[vid].second->is_disk << endl;
+	// 		cout << "is_boundary: " << vertices[vid].second->is_boundary << endl;
+	// 		cout << "is_selected" << vertices[vid].second->is_selected << endl;
+	// 		cout << "-----------------------------" << endl;
 			
-		}
-	}*/
+	// 	}
+	// }
 
 	//int sss;
 

@@ -17,6 +17,7 @@ void LoadInputNMM(Mesh* input, SlabMesh* slabMesh, std::string maname) {
   slabMesh->numEdges = 0;
   slabMesh->numFaces = 0;
   slabMesh->bound_weight = 0.1;
+  slabMesh->bb_diagonal_length = input->bb_diagonal_length;
 
   double len[4];
   len[0] = input->m_max[0] - input->m_min[0];
