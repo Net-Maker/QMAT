@@ -51,3 +51,27 @@ add_executable(QMAT main.cpp
         src/NonManifoldMesh.h
 )
 target_link_libraries(QMAT PRIVATE CGAL::CGAL gmp gmpxx)
+
+add_executable(mesh_to_ma 
+    src/mesh_to_ma.cpp
+    src/ThreeDimensionalShape.cpp
+    src/ThreeDimensionalShape.h
+    src/Mesh.cpp
+    src/Mesh.h
+    src/SlabMesh.cpp
+    src/SlabMesh.h
+    src/PrimMesh.cpp
+    src/PrimMesh.h
+    src/Wm4Math.cpp
+    src/Wm4Math.h
+    src/Wm4Matrix.cpp
+    src/Wm4Matrix.h
+    src/Wm4Vector.cpp
+    src/Wm4Vector.h
+    src/GeometryObjects.cpp
+    src/GeometryObjects.h
+    src/NonManifoldMesh.cpp
+    src/NonManifoldMesh.h
+)
+
+target_link_libraries(mesh_to_ma PRIVATE CGAL::CGAL gmp gmpxx)

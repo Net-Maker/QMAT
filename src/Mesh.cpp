@@ -1314,47 +1314,47 @@ void MPMesh::computesimpledt()
     }
 }
 
-// void MPMesh::markpoles()
-// {
-//     for(Finite_cells_iterator_t fci = dt.finite_cells_begin(); fci != dt.finite_cells_end(); fci ++)
-//         fci->info().is_pole = false;
-//
-//     for(Finite_vertices_iterator_t fvi = dt.finite_vertices_begin(); fvi != dt.finite_vertices_end(); fvi ++)
-//     {
-//         Vector3d p = to_wm4(fvi->point());
-//         std::vector<Cell_handle_t> fic;
-//         dt.finite_incident_cells(fvi,std::back_inserter(fic));
-//         double ld(0);
-//         Cell_handle_t ld_ch;
-//         bool found = false;
-//         for(unsigned i = 0; i < fic.size(); i ++)
-//         {
-//             if(fic[i]->info().inside)
-//             {
-//                 Vector3d cp = to_wm4(fic[i]->circumcenter());
-//                 double td = (p-cp).SquaredLength();
-//                 if(td > ld)
-//                 {
-//                     ld = td;
-//                     ld_ch = fic[i];
-//                     found = true;
-//                 }
-//             }
-//         }
-//         if(found)
-//         {
-//             ld_ch->info().is_pole = true;
-//             ld_ch->info().pole_bplist.insert(fvi->info().id);
-//         }
-//     }
-//
-//     for(Finite_cells_iterator_t fci = dt.finite_cells_begin(); fci != dt.finite_cells_end(); fci ++)
-//     {
-//         double radius = dt.TetCircumRadius(dt.tetrahedron(fci));
-//         if(fci->info().dist_center_to_boundary < 0.8*radius)
-//             fci->info().is_pole = false;
-//     }
-// }
+void MPMesh::markpoles()
+{
+    for(Finite_cells_iterator_t fci = dt.finite_cells_begin(); fci != dt.finite_cells_end(); fci ++)
+        fci->info().is_pole = false;
+
+    for(Finite_vertices_iterator_t fvi = dt.finite_vertices_begin(); fvi != dt.finite_vertices_end(); fvi ++)
+    {
+        Vector3d p = to_wm4(fvi->point());
+        std::vector<Cell_handle_t> fic;
+        dt.finite_incident_cells(fvi,std::back_inserter(fic));
+        double ld(0);
+        Cell_handle_t ld_ch;
+        bool found = false;
+        for(unsigned i = 0; i < fic.size(); i ++)
+        {
+            if(fic[i]->info().inside)
+            {
+                Vector3d cp = to_wm4(fic[i]->circumcenter());
+                double td = (p-cp).SquaredLength();
+                if(td > ld)
+                {
+                    ld = td;
+                    ld_ch = fic[i];
+                    found = true;
+                }
+            }
+        }
+        if(found)
+        {
+            ld_ch->info().is_pole = true;
+            ld_ch->info().pole_bplist.insert(fvi->info().id);
+        }
+    }
+
+    for(Finite_cells_iterator_t fci = dt.finite_cells_begin(); fci != dt.finite_cells_end(); fci ++)
+    {
+        double radius = dt.TetCircumRadius(dt.tetrahedron(fci));
+        if(fci->info().dist_center_to_boundary < 0.8*radius)
+            fci->info().is_pole = false;
+    }
+}
 
 int MPMesh::LocalFlipCount(Vertex_handle vh)
 {

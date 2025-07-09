@@ -7,3 +7,4 @@ data/offs
 data/*.obj
 data/*.png
 data/*.py
+data/

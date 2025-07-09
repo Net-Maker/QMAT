@@ -2076,6 +2076,7 @@ void SlabMesh::Simplify_with_Selected_Pole(int threshold, vector<vector<double> 
 
 	// then we iterate in vertices set and label them...
     // 遍历读取的极点，找到网格中最接近的顶点
+    int check_count = 0;
 	for (int select_id = 0;select_id < vset.size(); select_id++) {
 		double min_dis = 999999;
 		int min_idx = -1;
@@ -2106,9 +2107,9 @@ void SlabMesh::Simplify_with_Selected_Pole(int threshold, vector<vector<double> 
 		mPoint.push_back(vertices[min_idx].second->sphere.center[1]);
 		mPoint.push_back(vertices[min_idx].second->sphere.center[2]);
 		selected_pole.push_back(mPoint);
-
+        check_count++;
 	}
-	int check_count = 0;
+	
 	
 	cout << "how many: " << check_count << " / "<< vset.size() << endl;
 

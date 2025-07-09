@@ -139,6 +139,15 @@ f v1 v2 v3
 ```
 One can load the *.ma file using **Blender** with an open-sourced [blender-mat-addon](https://github.com/songshibo/blender-mat-addon).
 
+Once you finished the cmake process, you can use `mesh_to_ma` to generate `.ma` file by using `.off` file.
+
+To transfer a .obj file to .off file, just use `meshlabserver -i XX.obj -o XX.off`
+Then 
+```
+cd build
+./mesh_to_ma XX.off
+```
+
 ## Q&A
 1. For MacOS, resolving `clang: error: unsupported option '-fopenmp'`:
 
@@ -155,5 +164,4 @@ export CC=/usr/local/opt/llvm/bin/clang
 
 ## Todo List:
 1. add `polyscope` for GUI
-2. add computation for initial MA given OFF
-4. ...
+2. ...
