@@ -64,9 +64,9 @@ void ThreeDimensionalShape::ComputeInputNMM()
 		for(unsigned k = 0; k < 4; k ++)
 			(*bvp.second).bplist.insert(fci->vertex(k)->info().id);
 		(*bvp.second).sphere.radius = pt->TetCircumRadius(pt->tetrahedron(fci));
-		(*bvp.second).sphere.radius = fci->info().dist_center_to_boundary; // make sure that all the spheres are inside the domain
-		bvp.second->sphere.center = bvp.second->sphere.center;
-		bvp.second->sphere.radius = bvp.second->sphere.radius;
+		// (*bvp.second).sphere.radius = fci->info().dist_center_to_boundary; // make sure that all the spheres are inside the domain
+		// bvp.second->sphere.center = bvp.second->sphere.center;
+		// bvp.second->sphere.radius = bvp.second->sphere.radius;
 		input_nmm.vertices.push_back(bvp);
 		input_nmm.numVertices ++;
 		num_vor_v ++;
