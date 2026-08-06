@@ -1,7 +1,7 @@
 # Q-MAT
 
 # NOTE
-A better GPU version has been released in Zhiyang Dou's repo[this](https://github.com/Frank-ZY-Dou/Geometry_Tools/tree/main/QMAT_GPU)
+A better GPU version has been released in Zhiyang Dou's [repo](https://github.com/Frank-ZY-Dou/Geometry_Tools/tree/main/QMAT_GPU)
 
 
 This is an open-source code repository for SIGGRAPH paper [Q-MAT: Computing Medial Axis Transform by Quadratic Error Minimization](https://personal.utdallas.edu/~xguo/Q-MAT.pdf). It contains the core **simplify** function of Q-MAT. For more supports, please see the [Todo List](#todo-list). 
