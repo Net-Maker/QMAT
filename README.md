@@ -1,6 +1,6 @@
 # Q-MAT
 
-# NOTE
+## **NOTE**
 A better GPU version has been released in Zhiyang Dou's [repo](https://github.com/Frank-ZY-Dou/Geometry_Tools/tree/main/QMAT_GPU)
 
 
